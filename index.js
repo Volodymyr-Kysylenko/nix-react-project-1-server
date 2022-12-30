@@ -95,7 +95,7 @@ app.get('/api/photos-counts', function (req, res) {
     });
 });
 
-mongoose.connect('mongodb://localhost:27017/nix', function (err) {
+mongoose.connect('mongodb+srv://osvitoria:Osvitoria2022@cluster0.oc88i.mongodb.net/nix', function (err) {
     if (err) return console.log(err);
     app.listen(PORT, function () {
         console.log('Server has been started on PORT ' + PORT);
