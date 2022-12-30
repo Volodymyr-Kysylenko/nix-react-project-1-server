@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
-const PORT = env.process.port || 5000;
+const PORT = env?.process?.PORT || 5000;
 
 const Schema = mongoose.Schema;
 
