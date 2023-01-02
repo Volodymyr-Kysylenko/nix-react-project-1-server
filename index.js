@@ -6,17 +6,18 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const Schema = mongoose.Schema;
+const mongodbURI = 'mongodb+srv://osvitoria:Osvitoria2022@cluster0.oc88i.mongodb.net/nix';
 
-// const exchangeRateScheme = new Schema({ currency: String, rate: Object }, { versionKey: false });
-// const ExchangeRate = mongoose.model('ExchangeRate', exchangeRateScheme);
+const quizzesScheme = new Schema({ name: String, questions: [Object] });
+const Quizzes = mongoose.model('Quizzes', quizzesScheme);
 
-const photosScheme = new Schema({ id: Number, src: String, name: String, author: String, categories: [String], tags: [String] }, { versionKey: false });
-const Photos = mongoose.model('Photos', photosScheme);
+const imagesScheme = new Schema({ id: Number, src: String, name: String, author: String, categories: [String], tags: [String] }, { versionKey: false });
+const Images = mongoose.model('Images', imagesScheme);
 
 app.use(cors());
 app.use('/api/images', express.json());
-app.use('/api/image', express.json());
-app.use('/api/photos-count', express.json());
+app.use('/api/images-count', express.json());
+app.use('/api/quiz', express.json());
 
 app.get('/api/exchange-rate', function (req, res) {
     res.send({
@@ -26,7 +27,23 @@ app.get('/api/exchange-rate', function (req, res) {
     });
 });
 
-app.post('/api/image', function (req, res) {
+app.get('/api/quiz-list', function (req, res) {
+    Quizzes.find({}, 'name timer questionsamount', function (err, quizzes) {
+        if (err) return console.log(err);
+        res.send(quizzes);
+    });
+});
+
+app.post('/api/quiz', function (req, res) {
+    const id = req.body.id;
+
+    Quizzes.findOne({_id: id}, function (err, quiz) {
+        if (err) return console.log(err);
+        res.send(quiz);
+    });
+});
+
+app.post('/api/images', function (req, res) {
     const { page, search, filter } = req.body;
     const searchRegExp = new RegExp(search, 'i');
 
@@ -49,14 +66,14 @@ app.post('/api/image', function (req, res) {
     } else if (filter) {
         query = { 'categories': filter };
     }
-    
-    Photos.find(query, null, { skip: (page - 1) * 12, limit: 12 }, function (err, photos) {
+
+    Images.find(query, null, { skip: (page - 1) * 12, limit: 12 }, function (err, photos) {
         if (err) return console.log(err);
         res.send(photos);
     });
 });
 
-app.post('/api/photos-count', function (req, res) {
+app.post('/api/images-count', function (req, res) {
     const { search, filter } = req.body;
     const searchRegExp = new RegExp(search, 'i');
 
@@ -79,23 +96,14 @@ app.post('/api/photos-count', function (req, res) {
     } else if (filter) {
         query = { 'categories': filter };
     }
-    
-    Photos.countDocuments(query, function (err, count) {
+
+    Images.countDocuments(query, function (err, count) {
         if (err) return console.log(err);
-        console.log(count);
-        res.send({count: count});
+        res.send({ count: count });
     });
 });
 
-app.get('/api/photos-counts', function (req, res) {
-    Photos.countDocuments({}, async function (err, count) {
-        if (err) return console.log(err);
-        console.log(count);
-        res.json({ count });
-    });
-});
-
-mongoose.connect('mongodb+srv://osvitoria:Osvitoria2022@cluster0.oc88i.mongodb.net/nix', function (err) {
+mongoose.connect(mongodbURI, function (err) {
     if (err) return console.log(err);
     app.listen(PORT, function () {
         console.log('Server has been started on PORT ' + PORT);
