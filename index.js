@@ -68,14 +68,17 @@ app.post('/api/images', function (req, res) {
     }
 
     Images.find(query, null, { skip: (page - 1) * 12, limit: 12 }, function (err, photos) {
-        if (err) return console.log(err);
+        if (err) {
+            res.send([]);
+            return console.log(err)
+        };
         res.send(photos);
     });
 });
 
 app.post('/api/images-count', function (req, res) {
     const { search, filter } = req.body;
-    const searchRegExp = new RegExp(String(search), 'i');
+    const searchRegExp = new RegExp(search, 'i');
 
     let query = {};
     if (filter && search) {
