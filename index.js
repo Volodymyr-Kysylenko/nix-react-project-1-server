@@ -75,7 +75,7 @@ app.post('/api/images', function (req, res) {
 
 app.post('/api/images-count', function (req, res) {
     const { search, filter } = req.body;
-    const searchRegExp = new RegExp(search, 'i');
+    const searchRegExp = new RegExp(String(search), 'i');
 
     let query = {};
     if (filter && search) {
