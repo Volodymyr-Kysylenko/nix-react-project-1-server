@@ -67,7 +67,7 @@ app.post('/api/images', function (req, res) {
         query = { 'categories': filter };
     }
 
-    Images.find(query, null, { skip: (page - 1) * 12, limit: 12 }, function (err, photos) {
+    Images.find(query, null, { skip: (page - 1) * 12, limit: 12, sort: {id: 1} }, function (err, photos) {
         if (err) {
             res.send([]);
             return console.log(err)
