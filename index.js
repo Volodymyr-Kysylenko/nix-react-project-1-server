@@ -44,7 +44,7 @@ app.post('/api/quiz', function (req, res) {
 });
 
 app.post('/api/images', function (req, res) {
-    const { page, search, filter } = req.body;
+    const { page, search, filter, sorting} = req.body;
     const searchRegExp = new RegExp(search, 'i');
 
     let query = {};
@@ -67,7 +67,7 @@ app.post('/api/images', function (req, res) {
         query = { 'categories': filter };
     }
 
-    Images.find(query, null, { sort: {author: 1}, skip: (page - 1) * 12, limit: 12 }, function (err, photos) {
+    Images.find(query, null, { sort: {sorting: 1}, skip: (page - 1) * 12, limit: 12 }, function (err, photos) {
         if (err) {
             res.send([]);
             return console.log(err)
